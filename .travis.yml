@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mansoto8/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run mansoto8/react-test npm test -- --
+  
+after_success:
+  - docker build -t mansoto8/multi-client ./client
+  - docker build -t mansoto8/multi-nginx ./nginx
+  - docker build -t mansoto8/multi-server ./server
+  - docker build -t mansoto8/multi-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push mansoto8/multi-client
+  - docker push mansoto8/multi-nginx
+  - docker push mansoto8/multi-server
+  - docker push mansoto8/multi-worker
+
+
