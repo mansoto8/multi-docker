@@ -1,0 +1,7 @@
+FROM node:14.14.0-alpine
+WORKDIR "/home/node/app"
+COPY ./package.json ./package.json
+RUN npm install
+COPY ./index.js ./index.js
+COPY ./keys.js ./keys.js
+CMD ["npm", "run", "dev"]

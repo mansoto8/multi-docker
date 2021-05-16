@@ -1,0 +1,8 @@
+FROM node:alpine
+WORKDIR '/home/node/app'
+COPY './package.json' ./package.json
+RUN npm install
+COPY ./public ./public
+COPY ./src ./src
+COPY ./yarn.lock ./yarn.lock
+CMD ["npm", "run", "start"]

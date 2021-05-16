@@ -1,0 +1,58 @@
+version: '3'
+services:
+  postgres:
+    image:  'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+    depends_on: 
+      - api
+      - client
+  redis:
+    image: 'redis:latest'
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server 
+    volumes:
+      - ./server/src:/home/node/app/src
+      - ./server/public:/home/node/app/public
+      - ./server/package.json:/home/node/app/package.json
+      - ./server/yarn.lock:/home/node/app/yarn.lock
+      - ./server/index.js:/home/node/app/index.js
+      - ./server/keys.js:/home/node/app/keys.js
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+  client:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - ./client/src:/home/node/app/src
+      - ./client/public:/home/node/app/public
+      - ./client/package.json:/home/node/app/package.json
+      - ./client/yarn.lock:/home/node/app/yarn.lock
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - ./worker/index.js:/home/node/app/index.js
+      - ./worker/keys.js:/home/node/app/keys.js
+      - ./worker/package.json:/home/node/app/package.json
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
