@@ -1,0 +1,42 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "client",
+      "image": "mansoto8/multi-client",
+      "hostname": "client",
+      "essential": false
+    },
+    {
+      "name": "server",
+      "image": "mansoto8/multi-server",
+      "hostname": "api",
+      "essential": false
+    },
+    {
+      "name": "worker",
+      "image": "mansoto8/multi-worker",
+      "hostname": "worker",
+      "essential": false
+    },
+    {
+      "name": "worker",
+      "image": "mansoto8/multi-worker",
+      "hostname": "worker",
+      "essential": false
+    },
+    {
+      "name": "nginx",
+      "image": "mansoto8/multi-nginx",
+      "hostname": "nginx",
+      "essential": true,
+      "portMapppings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": ["client", "server"]
+    }
+  ]
+}
